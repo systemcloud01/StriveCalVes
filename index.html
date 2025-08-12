@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Profit Investor - Brand Anda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .results {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .result-item {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .result-item h3 {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .result-item .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .profit-positive {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .profit-negative {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        }
+
+        .investor-list {
+            margin-top: 30px;
+        }
+
+        .investor-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .investor-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .investor-profit {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .investor-profit.negative {
+            color: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Kalkulator Profit Investor</h1>
+            <p>Hitung dan lacak profit investasi di brand Anda dengan mudah</p>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>📊 Data Brand</h2>
+                <div class="form-group">
+                    <label for="brandName">Nama Brand:</label>
+                    <input type="text" id="brandName" placeholder="Masukkan nama brand Anda">
+                </div>
+                <div class="form-group">
+                    <label for="initialCapital">Modal Awal (Rp):</label>
+                    <input type="text" id="initialCapital" placeholder="100.000.000" class="number-input">
+                </div>
+                <div class="form-group">
+                    <label for="currentRevenue">Revenue Saat Ini (Rp):</label>
+                    <input type="text" id="currentRevenue" placeholder="150.000.000" class="number-input">
+                </div>
+                <div class="form-group">
+                    <label for="operationalCosts">Biaya Operasional (Rp):</label>
+                    <input type="text" id="operationalCosts" placeholder="30.000.000" class="number-input">
+                </div>
+                <div class="form-group">
+                    <label for="calculationPeriod">Periode Perhitungan:</label>
+                    <select id="calculationPeriod">
+                        <option value="monthly">Bulanan</option>
+                        <option value="quarterly">Triwulan</option>
+                        <option value="yearly">Tahunan</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>👥 Data Investor</h2>
+                <div id="investorInputs">
+                    <div class="investor-input">
+                        <div class="form-group">
+                            <label>Nama Investor:</label>
+                            <input type="text" class="investor-name" placeholder="Nama investor">
+                        </div>
+                        <div class="form-group">
+                            <label>Jumlah Investasi (Rp):</label>
+                            <input type="text" class="investor-amount number-input" placeholder="25.000.000">
+                        </div>
+                        <div class="form-group">
+                            <label>Persentase Bagi Hasil (%):</label>
+                            <input type="number" class="investor-percentage" placeholder="25" min="0" max="100">
+                        </div>
+                    </div>
+                </div>
+                <button type="button" onclick="addInvestor()" style="background: #28a745; margin-bottom: 15px; padding: 10px 20px; font-size: 14px;">+ Tambah Investor</button>
+                <button type="button" class="btn" onclick="calculateProfit()">💰 Hitung Profit</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <h2>📈 Hasil Perhitungan Profit</h2>
+            <div class="result-grid" id="resultGrid">
+                <!-- Results will be populated here -->
+            </div>
+            <div class="investor-list" id="investorResults">
+                <!-- Investor results will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let investorCount = 1;
+
+        // Function to format number with dots as thousand separators
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        // Function to remove dots and convert to number
+        function unformatNumber(str) {
+            return parseFloat(str.replace(/\./g, '')) || 0;
+        }
+
+        // Add event listeners for number inputs
+        function setupNumberInputs() {
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('number-input')) {
+                    // Remove all dots first
+                    let value = e.target.value.replace(/\./g, '');
+                    
+                    // Only allow numbers
+                    value = value.replace(/[^0-9]/g, '');
+                    
+                    // Format with dots if not empty
+                    if (value !== '') {
+                        e.target.value = formatNumber(value);
+                    } else {
+                        e.target.value = '';
+                    }
+                }
+            });
+
+            // Prevent non-numeric input
+            document.addEventListener('keypress', function(e) {
+                if (e.target.classList.contains('number-input')) {
+                    const char = String.fromCharCode(e.which);
+                    if (!/[0-9]/.test(char)) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        }
+
+        function addInvestor() {
+            investorCount++;
+            const investorInputs = document.getElementById('investorInputs');
+            const newInvestor = document.createElement('div');
+            newInvestor.className = 'investor-input';
+            newInvestor.innerHTML = `
+                <div class="form-group">
+                    <label>Nama Investor:</label>
+                    <input type="text" class="investor-name" placeholder="Nama investor">
+                </div>
+                <div class="form-group">
+                    <label>Jumlah Investasi (Rp):</label>
+                    <input type="text" class="investor-amount number-input" placeholder="25.000.000">
+                </div>
+                <div class="form-group">
+                    <label>Persentase Bagi Hasil (%):</label>
+                    <input type="number" class="investor-percentage" placeholder="25" min="0" max="100">
+                </div>
+                <button type="button" onclick="removeInvestor(this)" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 12px;">Hapus</button>
+                <hr style="margin: 15px 0; border: 1px solid #eee;">
+            `;
+            investorInputs.appendChild(newInvestor);
+        }
+
+        function removeInvestor(button) {
+            button.parentElement.remove();
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function calculateProfit() {
+            const brandName = document.getElementById('brandName').value || 'Brand Anda';
+            const initialCapital = unformatNumber(document.getElementById('initialCapital').value);
+            const currentRevenue = unformatNumber(document.getElementById('currentRevenue').value);
+            const operationalCosts = unformatNumber(document.getElementById('operationalCosts').value);
+            const period = document.getElementById('calculationPeriod').value;
+
+            // Calculate net profit
+            const netProfit = currentRevenue - operationalCosts;
+            const profitMargin = currentRevenue > 0 ? (netProfit / currentRevenue) * 100 : 0;
+            const roi = initialCapital > 0 ? (netProfit / initialCapital) * 100 : 0;
+
+            // Get investor data
+            const investorInputs = document.querySelectorAll('.investor-input');
+            const investors = [];
+            let totalInvestment = 0;
+
+            investorInputs.forEach(input => {
+                const name = input.querySelector('.investor-name').value;
+                const amountInput = input.querySelector('.investor-amount');
+                const amount = unformatNumber(amountInput.value);
+                const percentage = parseFloat(input.querySelector('.investor-percentage').value) || 0;
+
+                if (name && amount > 0 && percentage > 0) {
+                    const investorProfit = (netProfit * percentage) / 100;
+                    const investorROI = (investorProfit / amount) * 100;
+                    
+                    investors.push({
+                        name,
+                        amount,
+                        percentage,
+                        profit: investorProfit,
+                        roi: investorROI
+                    });
+                    totalInvestment += amount;
+                }
+            });
+
+            // Display results
+            const resultsDiv = document.getElementById('results');
+            const resultGrid = document.getElementById('resultGrid');
+            const investorResults = document.getElementById('investorResults');
+
+            let periodText = '';
+            switch(period) {
+                case 'monthly': periodText = 'Bulan Ini'; break;
+                case 'quarterly': periodText = 'Triwulan Ini'; break;
+                case 'yearly': periodText = 'Tahun Ini'; break;
+            }
+
+            resultGrid.innerHTML = `
+                <div class="result-item">
+                    <h3>Total Revenue</h3>
+                    <div class="value">${formatCurrency(currentRevenue)}</div>
+                </div>
+                <div class="result-item">
+                    <h3>Biaya Operasional</h3>
+                    <div class="value">${formatCurrency(operationalCosts)}</div>
+                </div>
+                <div class="result-item ${netProfit >= 0 ? 'profit-positive' : 'profit-negative'}">
+                    <h3>Net Profit ${periodText}</h3>
+                    <div class="value">${formatCurrency(netProfit)}</div>
+                </div>
+                <div class="result-item">
+                    <h3>Margin Profit</h3>
+                    <div class="value">${profitMargin.toFixed(2)}%</div>
+                </div>
+                <div class="result-item">
+                    <h3>ROI Brand</h3>
+                    <div class="value">${roi.toFixed(2)}%</div>
+                </div>
+                <div class="result-item">
+                    <h3>Total Investasi</h3>
+                    <div class="value">${formatCurrency(totalInvestment)}</div>
+                </div>
+            `;
+
+            if (investors.length > 0) {
+                investorResults.innerHTML = `
+                    <h3>💼 Detail Profit Per Investor</h3>
+                    ${investors.map(investor => `
+                        <div class="investor-item">
+                            <div>
+                                <div class="investor-name">${investor.name}</div>
+                                <small>Investasi: ${formatCurrency(investor.amount)} (${investor.percentage}%)</small>
+                            </div>
+                            <div class="investor-profit ${investor.profit >= 0 ? '' : 'negative'}">
+                                ${formatCurrency(investor.profit)}
+                                <br><small>ROI: ${investor.roi.toFixed(2)}%</small>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+            } else {
+                investorResults.innerHTML = '<p>Belum ada data investor yang valid.</p>';
+            }
+
+            resultsDiv.classList.add('show');
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setupNumberInputs();
+            
+            // Add sample data with formatted numbers
+            document.getElementById('brandName').value = 'Brand Inovatif';
+            document.getElementById('initialCapital').value = '';
+            document.getElementById('currentRevenue').value = '750.000.000';
+            document.getElementById('operationalCosts').value = '200.000.000';
+            
+            const firstInvestorInputs = document.querySelector('.investor-input');
+            firstInvestorInputs.querySelector('.investor-name').value = 'Investor A';
+            firstInvestorInputs.querySelector('.investor-amount').value = '150.000.000';
+            firstInvestorInputs.querySelector('.investor-percentage').value = '20';
+        });
+    </script>
+</body>
+</html>
